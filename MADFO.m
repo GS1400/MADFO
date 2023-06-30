@@ -28,7 +28,7 @@
 %  .qf         %   (ftarget-f)/(finit-f)
 %  .initTime   %   inital cputime
 %  .done       %   done with the search?
-%  .acc        %   stop when qf<=acc
+%  .accf       %   stop when qf<=accf
 %  .secmax     %   stop if sec>=secmax 
 %  .nfmax      %   stop if nf>=nfmax 
 %  .finit      %   the initial f
@@ -84,7 +84,7 @@ if isfield(st,'ftarget'), info.ftarget=st.ftarget;
 else, info.ftarget=0;
 end;
 if isfield(st,'accf'), info.accf=st.accf;
-else, info.acc=-inf;
+else, info.accf=-inf;
 end;
 info.prt = prt; % print level
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,9 +106,9 @@ while 1
   sec       = (cputime-initTime);
   info.done = (sec>st.secmax)|(nf>=st.nfmax);
   if nf>1
-     qf        = (f-st.farget)/(finit-st.farget);
+     qf        = (f-st.ftarget)/(finit-st.ftarget);
      info.qf   = qf;
-     info.done = (info.done|info.qf<=st.acc);
+     info.done = (info.done|info.qf<=st.accf);
      if f<fb
          fb=f;
           if prt>=0
@@ -137,7 +137,7 @@ info.time_In_Second    = sec;
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% solution status  %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-if info.qs_convergeSpeed<=st.acc
+if info.qs_convergeSpeed<=st.accf
   info.status_of_converge = 'accuracy reached';
 elseif nf>=st.nfmax
    info.status_of_converge = 'nfmax reached';
