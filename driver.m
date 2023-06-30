@@ -22,9 +22,9 @@ st.prt=0;      %   printlevel (default: -1)
 %              %   -1: nothing, 0: litte, >=1: more and more
 st.nfmax=5000; %   stop if nf>=nfmax   (default: inf)
 st.secmax=inf; %   stop if sec>=secmax (default: inf)
-st.farget=0;   % target function value (to compute qf)
+st.ftarget=0;  % target function value (to compute qf)
                %  qf=(ftarget-f)/(finit-f)
-st.acc=1e-10;  % target accuracy for stopping test qf<=acc
+st.accf=1e-10; % target accuracy for stopping test qf<=accf
                % (default: 1e-4)
 % MADFO repeatedly calls MADFOstep
 [xbest,fbest,info] = MADFO(fun,x,st,tune)
