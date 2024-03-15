@@ -98,9 +98,8 @@ initTime=cputime;
 nf=0;
 while 1
   % get function value
-  f  = fun(x); nf = nf+1;
-  % get new point for function evaluation
-  x         = MADFOstep(x(:),f,prt);
+  f  = fun(x); nf = nf+1; % get new point for function evaluation
+  x  = MADFOstep(x(:),f,prt); 
   x         = reshape(x,m,n);
   % restore original format of x
   sec       = (cputime-initTime);

@@ -43,7 +43,7 @@ persistent Fmut ranks
 % persistent variables for computing non-monotone term
 persistent Fnm  fnm
 % persistent variables for extrapolation
-persistent F alpha sigmae netxrapol ie
+persistent fb sigmab sigmae netxrapol ie
 % persistent variables for heuristic
 persistent Xt Ft x13 x12 x1 nhp
 % persistent variables for best point and its function value
@@ -216,32 +216,32 @@ while 1
         RecomInfo.f= max(-1e50,min(f,1e50)); nf=nf+1;
         fnm = randNM(Fnm,fbest,RecomInfo.f,tune);
         if fnm>RecomInfo.f+tune.gamma*sigmae^2 % a decrease in f is found
-            F=RecomInfo.f; alpha=sigmae; ie=0; Vstate=8; 
-            % go to do extrapolation
+            fb=RecomInfo.f; sigmab=sigmae; ie=0; 
+            Vstate=8; % go to do extrapolation
         else
             Vstate=11; % opposite direction is tried
         end
     end
      while Vstate==8 || Vstate==9 % extrapolation loop
            if Vstate==8
-                sigmae = tune.gammaE*sigmae; alpha=[alpha,sigmae];
+                sigmae = tune.gammaE*sigmae; 
                 RecomInfo.y=xbest+sigmae*RecomInfo.d; x=RecomInfo.y;
                 Vstate=9;
                 return; % go to compute f at x
            end
            if Vstate==9 % f at x was computed
-             RecomInfo.f = max(-1e50,min(f,1e50)); 
-             F=[F,RecomInfo.f]; nf=nf+1; ie = ie+1;
+             RecomInfo.f = max(-1e50,min(f,1e50)); nf=nf+1; ie = ie+1;
+             if RecomInfo.f<fb, 
+               fb=RecomInfo.f; sigmab=sigmae; 
+             end
              nodec = fnm<RecomInfo.f+tune.gamma*sigmae^2;
              if nodec || ie==tune.E % end of extrapolation
                                     % update the best point and traingle
                 netxrapol = netxrapol+1;
-                [~,ib] = min(F); ib=ib(1); sigmae=alpha(ib);
-                fbest=F(ib); xbest=xbest+sigmae*RecomInfo.d;
+                fbest=fb; xbest=xbest+sigmab*RecomInfo.d;
                 % update the vertices of the first triangle
                 [Xt,Ft]=triUpdate1(Xt,Ft,xbest,fbest,tune);
                 Vstate=14; % go to update s, sigma and M
-                F=[]; alpha=[];
                  if prt>=2
                    disp(' ')
                    disp(['extrapolation was terminated,',...
@@ -275,32 +275,33 @@ while 1
     if Vstate==88
          RecomInfo.f= max(-1e50,min(f,1e50)); nf=nf+1;
          if fnm>RecomInfo.f+tune.gamma*sigmae^2
-             F=RecomInfo.f; alpha=sigmae; ie=0;  
+             fb=RecomInfo.f; sigmab=sigmae; ie=0;  
              Vstate=888; % a decrease in f is found
+             
          else
              Vstate=12; % no decrease in f 
          end
     end
     while Vstate==888 || Vstate==999 % extrapolation loop
           if Vstate==888 % expand extrapolation step size
-              sigmae = tune.gammaE*sigmae; alpha=[alpha,sigmae];
+              sigmae = tune.gammaE*sigmae; 
               RecomInfo.y = xbest + sigmae*RecomInfo.d;
               x = RecomInfo.y;
               Vstate=999;
               return; % go to compute f at x
            end
            if Vstate==999 % f at x was computed
-             RecomInfo.f = max(-1e50,min(f,1e50)); 
-             F=[F,RecomInfo.f]; nf=nf+1; ie = ie+1;
+             RecomInfo.f = max(-1e50,min(f,1e50));nf=nf+1; ie = ie+1;
+             if RecomInfo.f<fb, 
+                fb=RecomInfo.f; sigmab=sigmae; 
+             end
              nodec = fnm<RecomInfo.f+tune.gamma*sigmae^2;
              if nodec || ie==tune.E % end of extrapolation
                 netxrapol = netxrapol+1;
-                [~,ib] = min(F); ib=ib(1); sigmae=alpha(ib);
-                fbest=F(ib); xbest=xbest+sigmae*RecomInfo.d;
+                fbest=fb; xbest=xbest+sigmab*RecomInfo.d;
                 % update the vertices of the first triangle
                 [Xt,Ft]=triUpdate1(Xt,Ft,xbest,fbest,tune);
                 Vstate=14; % go to update s, sigma and M
-                F=[]; alpha=[];
                 if prt>=2
                    disp(' ')
                    disp(['extrapolation was terminated,', ...
@@ -371,7 +372,9 @@ while 1
                  % x can be a new best point
        f = max(-1e50,min(f,1e50)); nf= nf+1;
        % the second decrease condition in f is checked
-       if f<fbest, xbest=x; fbest =f; % best point is updated
+       if f<fbest, 
+           xbest=x; fbest =f; % best point is updated
+           [Xt,Ft]=triUpdate1(Xt,Ft,xbest,fbest,tune);
            if prt>=2
                disp(' ')
                disp('random triangle subspace point was accpeted')
