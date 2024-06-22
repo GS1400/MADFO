@@ -15,9 +15,9 @@ This directory contains
 * a driver program driver.m showing its use, 
 * and the paper
 
-M. Kimiaei and A. Neumaier
+M. Kimiaei and A. Neumaier, Effective matrix adaptation strategy for noisy derivative-free optimization, 
+accepted for publication in Mathematical Programming Computation (20.06.2024). 
 
-Effective matrix adaptation strategy for noisy derivative-free optimization
 
 This paper describes the method implemented and some test results. 
 Please cite this paper when using this package in scientific work.
