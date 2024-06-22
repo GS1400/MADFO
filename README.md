@@ -6,6 +6,10 @@ The program was written by Morteza Kimiaei (University of Vienna).
 Please inform the author at kimiaeim83@univie.ac.at if you make 
 serious use of this code. 
 
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12340674.svg)](https://doi.org/10.5281/zenodo.12340674)
+
+
 This directory contains 
 * the Matlab source code for Version 1.0 (March 15, 2024), 
 * a driver program driver.m showing its use, 
